@@ -183,7 +183,7 @@ namespace MyApp // Note: actual namespace depends on the project name.
                 }
 
                 Console.Clear();
-                Console.WriteLine("Merci d'avoir jouer !\n");
+                Console.WriteLine("Merci d'avoir joué !\n");
             }
         }
     }
