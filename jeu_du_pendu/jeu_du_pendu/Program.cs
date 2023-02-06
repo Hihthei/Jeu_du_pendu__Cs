@@ -48,7 +48,7 @@ namespace MyApp // Note: actual namespace depends on the project name.
 
         ///@Brief : permet de demander une lettre à l'utilisateur
         ///@exit : renvoie la lettre que l'utilisateur a entrée
-        static char DemanderUneLettre()
+        static string DemanderUneLettre()
         {
             while (true)
             {
@@ -60,7 +60,23 @@ namespace MyApp // Note: actual namespace depends on the project name.
                     if (((reponse[0] > 64) && (reponse[0] < 91)) || ((reponse[0] > 96) && (reponse[0] < 123)))
                     {
                         reponse = reponse.ToUpper();
-                        return reponse[0];
+                        return reponse;
+                    }
+                }
+                else if (reponse.Length > 1)
+                {
+                    int tmp = 0;
+                    for (int i = 0; i < reponse.Length; i++)
+                    {
+                        if (((reponse[0] > 64) && (reponse[0] < 91)) || ((reponse[0] > 96) && (reponse[0] < 123)))
+                        {
+                            tmp++;
+                        }
+                    }
+                    if (tmp == reponse.Length)
+                    {
+                        reponse = reponse.ToUpper();
+                        return reponse;
                     }
                 }
                 Console.WriteLine("ERREUR : Vous devez rentrer une lettre.");
@@ -68,12 +84,14 @@ namespace MyApp // Note: actual namespace depends on the project name.
         }
 
 
+
+
         ///@Brief : boucle pour répéter les fonctions pour trouver le mot
         ///@param mot : le mot aléatoire qu'il faut retrouver
         ///@exit : affichage dans le terminal si le mot est trouvé ou non
         static void DevinerMot(string mot)
         {
-            char lettre;
+            string lettre;
             List<char> lettreTrouvees = new List<char>();
 
             List<char> lettreFausses = new List<char>();
@@ -91,42 +109,74 @@ namespace MyApp // Note: actual namespace depends on the project name.
                 AfficherMot(mot, lettreTrouvees);
                 Console.WriteLine();
                 lettre = DemanderUneLettre();
-                Console.Clear();
-
-                if (lettreTrouvees.Contains(lettre) || lettreFausses.Contains(lettre))//On vérifie que c'est la première utilisations de la lettre
+                
+                if (lettre.Length == 1)
                 {
-                    Console.WriteLine("Vous avez déjà rentré cette lettre !");
+                    Console.Clear();
+
+                    if (lettreTrouvees.Contains(lettre[0]) || lettreFausses.Contains(lettre[0]))//On vérifie que c'est la première utilisations de la lettre
+                    {
+                        Console.WriteLine("Vous avez déjà rentré cette lettre !");
+                    }
+                    else if (mot.Contains(lettre))//On vérifie que la lettre est contenue dans le mot ou pas
+                    {
+
+                        Console.WriteLine("Cette lettre est dans le mot.");
+                        lettreTrouvees.Add(lettre[0]);
+                        if (MotTrouvees(mot, lettreTrouvees))
+                        {
+                            Console.WriteLine("Félicitations ! Vous avez trouvez le mot \" " + mot + " \" !");
+                            return;
+                        }
+                    }
+                    else if (viesRestantes == 1)//Si c'était notre dernière vie, alors on est mourru
+                    {
+                        Console.WriteLine(Ascii.PENDU[NB_VIES]);
+                        Console.WriteLine();
+                        Console.WriteLine("Vous avez perdu !");
+                        Console.WriteLine("Le mot était : " + mot);
+                        return;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Cette lettre n'est pas dans le mot.");
+                        lettreFausses.Add(lettre[0]);
+                        viesRestantes--;
+                    }
+                    if (lettreFausses.Count != 0)//On vérifie le nombre de lettre fausse, pour savoir si on doit les afficher ou non
+                    {
+                        Console.WriteLine("Le mot ne contient pas les lettres suivantes : " + String.Join(", ", lettreFausses));
+                    }
+                    Console.WriteLine();
                 }
-                else if (mot.Contains(lettre))//On vérifie que la lettre est contenue dans le mot ou pas
+                else if (lettre.Length > 1)
                 {
+                    Console.Clear();
 
-                    Console.WriteLine("Cette lettre est dans le mot.");
-                    lettreTrouvees.Add(lettre);
-                    if (MotTrouvees(mot, lettreTrouvees))
+                    if (lettre.Equals(mot))
                     {
                         Console.WriteLine("Félicitations ! Vous avez trouvez le mot \" " + mot + " \" !");
                         return;
                     }
-                }
-                else if (viesRestantes == 1)//Si c'était notre dernière vie, alors on est mourru
-                {
-                    Console.WriteLine(Ascii.PENDU[NB_VIES]);
+                    else if (viesRestantes == 1)//Si c'était notre dernière vie, alors on est mourru
+                    {
+                        Console.WriteLine(Ascii.PENDU[NB_VIES]);
+                        Console.WriteLine();
+                        Console.WriteLine("Vous avez perdu !");
+                        Console.WriteLine("Le mot était : " + mot);
+                        return;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Ce n'est pas le bon mot.");
+                        viesRestantes--;
+                    }
+                    if (lettreFausses.Count != 0)//On vérifie le nombre de lettre fausse, pour savoir si on doit les afficher ou non
+                    {
+                        Console.WriteLine("Le mot ne contient pas les lettres suivantes : " + String.Join(", ", lettreFausses));
+                    }
                     Console.WriteLine();
-                    Console.WriteLine("Vous avez perdu !");
-                    Console.WriteLine("Le mot était : " + mot);
-                    return;
                 }
-                else
-                {
-                    Console.WriteLine("Cette lettre n'est pas dans le mot.");
-                    lettreFausses.Add(lettre);
-                    viesRestantes--;
-                }
-                if (lettreFausses.Count != 0)//On vérifie le nombre de lettre fausse, pour savoir si on doit les afficher ou non
-                {
-                    Console.WriteLine("Le mot ne contient pas les lettres suivantes : " + String.Join(", ", lettreFausses));
-                }
-                Console.WriteLine();
             }
         }
 
