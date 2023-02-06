@@ -57,8 +57,11 @@ namespace MyApp // Note: actual namespace depends on the project name.
 
                 if (reponse.Length == 1)//On vérifie que l'utilisateur à envoyé une seule lettre
                 {
-                    reponse = reponse.ToUpper();
-                    return reponse[0];
+                    if (((reponse[0] > 64) && (reponse[0] < 91)) || ((reponse[0] > 96) && (reponse[0] < 123)))
+                    {
+                        reponse = reponse.ToUpper();
+                        return reponse[0];
+                    }
                 }
                 Console.WriteLine("ERREUR : Vous devez rentrer une lettre.");
             }
